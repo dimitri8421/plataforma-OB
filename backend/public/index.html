@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preço do Ativo em Tempo Real</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        #status {
+            margin-top: 20px;
+            font-weight: bold;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <h1>Preço do Ativo em Tempo Real</h1>
+    <div id="price">Aguardando dados...</div>
+    <div id="status">Conectando ao servidor...</div>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

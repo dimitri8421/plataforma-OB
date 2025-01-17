@@ -1,0 +1,50 @@
+{
+  "name": "meu-projeto-backend",
+  "version": "1.0.0",
+  "description": "Backend completo para gerenciamento e processamento de dados.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "test": "jest"
+  },
+  "author": "Jonathan W",
+  "license": "ISC",
+  "dependencies": {
+    "@binance/connector": "^3.5.0",
+    "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "express-validator": "^7.2.0",
+    "glob": "^11.0.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^9.0.2",
+    "meu-projeto-backend": "file:",
+    "mongoose": "^8.8.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.5",
+    "pdfkit": "^0.15.1",
+    "pg": "^8.13.1",
+    "rimraf": "^6.0.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "stripe": "^17.3.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=20.18.0",
+    "npm": ">=10.8.2"
+  },
+  "keywords": []
+}
