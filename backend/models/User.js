@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 // Função para validar os dados do usuário
 const validateUserData = (username, email, password) => {
   if (!username || !email || !password) {
-    throw new Error('Todos os campos (username, email, password) são obrigatórios');
+    throw new Error('Todos os campos (username, email, password, telefone) são obrigatórios');
   }
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   if (!emailRegex.test(email)) {
@@ -24,15 +24,15 @@ const validateUserData = (username, email, password) => {
 };
 
 // Função para criar um novo usuário
-const createUser = async (username, email, password) => {
+const createUser = async (username, email, password, telefone) => {
   try {
     // Validação de dados
-    validateUserData(username, email, password);
+    validateUserData(username, email, password, telefone);
     
     // Criptografar a senha
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const query = 'INSERT INTO Users (username, email, password) VALUES (?, ?, ?)';
+    const query = 'INSERT INTO Users (username, email, password, telefone) VALUES (?, ?, ?, ?)';
     const values = [username, email, hashedPassword];
 
     const [result] = await pool.query(query, values);
@@ -47,7 +47,7 @@ const createUser = async (username, email, password) => {
 
 // Função para buscar todos os usuários
 const getAllUsers = async () => {
-  const query = 'SELECT id, username, email, role FROM Users ORDER BY createdAt DESC';
+  const query = 'SELECT id, username, email, role, telefone FROM Users ORDER BY createdAt DESC';
   try {
     const [results] = await pool.query(query);
     return results;
@@ -59,7 +59,7 @@ const getAllUsers = async () => {
 
 // Função para buscar um usuário por email
 const getUserByEmail = async (email) => {
-  const query = 'SELECT id, username, email, password, role FROM Users WHERE email = ?';
+  const query = 'SELECT id, username, email, password, role, telefone FROM Users WHERE email = ?';
   try {
     const [results] = await pool.query(query, [email]);
     if (results.length === 0) {
@@ -74,7 +74,7 @@ const getUserByEmail = async (email) => {
 
 // Função para buscar um usuário por ID
 const getUserById = async (userId) => {
-  const query = 'SELECT id, username, email, role FROM Users WHERE id = ?';
+  const query = 'SELECT id, username, email, role, telefone FROM Users WHERE id = ?';
   try {
     const [results] = await pool.query(query, [userId]);
     return results[0] || null;  // Retorna o usuário encontrado ou null
@@ -86,15 +86,15 @@ const getUserById = async (userId) => {
 
 // Função para atualizar dados de um usuário específico
 const updateUserById = async (userId, userData) => {
-  const { username, email, role } = userData;
+  const { username, email, role, telefone } = userData;
   
   // Validação de dados
   validateUserData(username, email, userData.password || '');
 
   const query = `
-    UPDATE Users SET username = ?, email = ?, role = ?, updatedAt = NOW() 
+    UPDATE Users SET username = ?, email = ?, role = ?, telefone = ?, updatedAt = NOW() 
     WHERE id = ?`;
-  const values = [username, email, role, userId];
+  const values = [username, email, role, telefone, userId];
 
   try {
     const [result] = await pool.query(query, values);

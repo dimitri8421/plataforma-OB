@@ -55,4 +55,4 @@ async function inserir(nome, email, senha, telefone) {
 // Exemplo de como usar
 const email = 'tes33333te@exemplo.com';
 const senha = 'senha123';
-inserir("Patrick", "pat323232873298327@patrick.com", "8421", "37627362372");
+inserir("Lucas", "lucas.camacho@gmail.com", "1234", "19998566543");
