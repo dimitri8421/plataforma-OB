@@ -4,12 +4,14 @@ const { Server } = require('socket.io'); // Importa o Socket.IO
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const path = require('path'); // Importado para servir arquivos estáticos
-const { authenticateToken } = require('./backend/config/auth'); // Middleware para autenticar token
-const pool = require('./backend/config/db'); // Configuração do PostgreSQL
-const { subscribeToCandles } = require('./backend/services/binance_service');
+const { authenticateToken } = require('./src/config/auth'); // Middleware para autenticar token
+const pool = require('./src/config/db'); // Configuração do PostgreSQL
+const { subscribeToCandles } = require('./src/services/binance_service');
 const cors = require('cors'); // Para gerenciar CORS
 const morgan = require('morgan'); // Para logging de requisições HTTP
 const rateLimit = require('express-rate-limit'); // Limitação de taxa
+const setupWebSocket = require('./src/config/websocket');
+const allRoutes = require('./src/allRoutes');
 
 const app = express();
 const server = http.createServer(app); // Criação do servidor HTTP com Express
@@ -143,6 +145,8 @@ app.get('/', (req, res) => {
   res.status(200).send('Servidor está funcionando');
 });
 
+app.use(allRoutes)
+
 // Rota para obter dados de candles - protegida com authenticateToken
 app.get('/api/candles', authenticateToken, (req, res) => {
   try {
@@ -244,7 +248,6 @@ app.use((err, req, res, next) => {
 });
 
 // Configura o WebSocket
-const setupWebSocket = require('./backend/config/websocket');
 setupWebSocket(server);
 
 // Inicializa o servidor HTTP

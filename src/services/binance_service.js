@@ -40,7 +40,7 @@ function subscribeToCandles(pair = 'btcusdt', interval = '1m', onCandleUpdate) {
     ws.on('message', (data) => {
       const candleData = JSON.parse(data);
       if (candleData.k) {
-        console.log(`Dados de Candle em tempo real para ${pair}:`, candleData.k);
+        // console.log(`Dados de Candle em tempo real para ${pair}:`, candleData.k);
         onCandleUpdate(candleData.k);  // Callback para manipular dados da candle
       }
     });

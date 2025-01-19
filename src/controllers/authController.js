@@ -67,15 +67,23 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Usuário não encontrado' });
     }
 
-    // Comparar a senha fornecida com a senha criptografada
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    console.log("\n\n")
+    console.log(user)
+    console.log("\n\n")
+
+    if(password !== user.senha){
       return res.status(400).json({ success: false, message: 'Senha incorreta' });
     }
 
+    // // Comparar a senha fornecida com a senha criptografada
+    // const isPasswordValid = await bcrypt.compare(password, user.senha);
+    // if (!isPasswordValid) {
+    //   return res.status(400).json({ success: false, message: 'Senha incorreta' });
+    // }
+
     // Criar um token JWT
     const token = jwt.sign(
-      { id: user.id, role: user.role },  // Adicionando o role no payload
+      { id: user.id },  // Adicionando o role no payload
       process.env.JWT_SECRET,  // Secret key para o token
       { expiresIn: '1h' }  // Expiração do token em 1 hora
     );
@@ -87,9 +95,8 @@ exports.login = async (req, res) => {
       token,
       user: {
         telefone: user.telefone,
-        username: user.username,
+        nome: user.nome,
         email: user.email,
-        role: user.role
       }
     });
   } catch (error) {

@@ -35,7 +35,7 @@ async function checkCredentials(email, senha) {
 }
 
 
-async function inserir(nome, email, senha, telefone) {
+async function insert(nome, email, senha, telefone) {
     try {
         await client.connect();
         const res = await client.query(
@@ -52,7 +52,23 @@ async function inserir(nome, email, senha, telefone) {
     }
 
 }
+async function get() {
+    try {
+        await client.connect();
+        const res = await client.query(
+            'SELECT * FROM usuarios',
+        );
+        console.log('Usuários recebidos', res.rows);
+    }
+    catch (error) {
+        console.error('Erro receber usuarios', error);
+    } finally {
+        // Fechar a conexão
+        await client.end();
+    }
+}
 // Exemplo de como usar
 const email = 'tes33333te@exemplo.com';
 const senha = 'senha123';
-inserir("Lucas", "lucas.camacho@gmail.com", "1234", "19998566543");
+// insert("Lucas", "lucas.camacho@gmail.com", "1234", "19998566543");
+get();

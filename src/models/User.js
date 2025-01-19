@@ -1,21 +1,11 @@
-const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs'); // Para hash de senha
 
-// Configuração da pool de conexões MySQL
-const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-});
+const pool = require('../config/db');  // Importa a conexão com o banco de dados
 
 // Função para validar os dados do usuário
-const validateUserData = (username, email, password) => {
-  if (!username || !email || !password) {
-    throw new Error('Todos os campos (username, email, password, telefone) são obrigatórios');
+const validateUserData = (nome, email, senha) => {
+  if (!nome || !email || !senha) {
+    throw new Error('Todos os campos (nome, email, senha, telefone) são obrigatórios');
   }
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
   if (!emailRegex.test(email)) {
@@ -24,21 +14,21 @@ const validateUserData = (username, email, password) => {
 };
 
 // Função para criar um novo usuário
-const createUser = async (username, email, password, telefone) => {
+const createUser = async (nome, email, senha, telefone) => {
   try {
     // Validação de dados
-    validateUserData(username, email, password, telefone);
+    validateUserData(nome, email, senha, telefone);
     
     // Criptografar a senha
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedsenha = await bcrypt.hash(senha, 12);
 
-    const query = 'INSERT INTO Users (username, email, password, telefone) VALUES (?, ?, ?, ?)';
-    const values = [username, email, hashedPassword];
+    const query = 'INSERT INTO usuarios (nome, email, senha, telefone) VALUES (?, ?, ?, ?)';
+    const values = [nome, email, hashedsenha];
 
     const [result] = await pool.query(query, values);
 
     // Retorna o usuário criado, incluindo o id gerado
-    return { id: result.insertId, username, email };
+    return { id: result.insertId, nome, email };
   } catch (error) {
     console.error('Erro ao criar usuário:', error.message);
     throw new Error('Erro ao criar o usuário');
@@ -47,7 +37,7 @@ const createUser = async (username, email, password, telefone) => {
 
 // Função para buscar todos os usuários
 const getAllUsers = async () => {
-  const query = 'SELECT id, username, email, role, telefone FROM Users ORDER BY createdAt DESC';
+  const query = 'SELECT id, nome, email,  telefone FROM usuarios ORDER BY createdAt DESC';
   try {
     const [results] = await pool.query(query);
     return results;
@@ -59,22 +49,22 @@ const getAllUsers = async () => {
 
 // Função para buscar um usuário por email
 const getUserByEmail = async (email) => {
-  const query = 'SELECT id, username, email, password, role, telefone FROM Users WHERE email = ?';
+  const query = 'SELECT id, nome, email, senha,  telefone FROM usuarios WHERE email = $1';
   try {
-    const [results] = await pool.query(query, [email]);
-    if (results.length === 0) {
+    const results = await pool.query(query, [email]);
+    if (results.rows.length === 0) {
       console.warn(`Usuário não encontrado para o email: ${email}`);
     }
-    return results[0] || null;  // Retorna o primeiro usuário encontrado ou null
+    return results.rows[0] || null;  // Retorna o primeiro usuário encontrado ou null
   } catch (error) {
-    console.error('Erro ao buscar usuário por email:', error.message);
+    console.error('Erro ao buscar usuário por email:', error);
     throw new Error('Erro ao buscar usuário');
   }
 };
 
 // Função para buscar um usuário por ID
 const getUserById = async (userId) => {
-  const query = 'SELECT id, username, email, role, telefone FROM Users WHERE id = ?';
+  const query = 'SELECT id, nome, email, telefone FROM usuarios WHERE id = ?';
   try {
     const [results] = await pool.query(query, [userId]);
     return results[0] || null;  // Retorna o usuário encontrado ou null
@@ -86,15 +76,15 @@ const getUserById = async (userId) => {
 
 // Função para atualizar dados de um usuário específico
 const updateUserById = async (userId, userData) => {
-  const { username, email, role, telefone } = userData;
+  const { nome, email,  telefone } = userData;
   
   // Validação de dados
-  validateUserData(username, email, userData.password || '');
+  validateUserData(nome, email, userData.senha || '');
 
   const query = `
-    UPDATE Users SET username = ?, email = ?, role = ?, telefone = ?, updatedAt = NOW() 
+    UPDATE usuarios SET nome = ?, email = ?,  telefone = ?, updatedAt = NOW() 
     WHERE id = ?`;
-  const values = [username, email, role, telefone, userId];
+  const values = [nome, email,  telefone, userId];
 
   try {
     const [result] = await pool.query(query, values);
@@ -108,7 +98,7 @@ const updateUserById = async (userId, userData) => {
 
 // Função para excluir um usuário
 const deleteUserById = async (userId) => {
-  const query = 'DELETE FROM Users WHERE id = ?';
+  const query = 'DELETE FROM usuarios WHERE id = ?';
   try {
     const [result] = await pool.query(query, [userId]);
     return result.affectedRows > 0;  // Retorna true se a exclusão for bem-sucedida
@@ -119,7 +109,7 @@ const deleteUserById = async (userId) => {
 };
 
 // Função para autenticar usuário (verificar a senha)
-const authenticateUser = async (email, password) => {
+const authenticateUser = async (email, senha) => {
   try {
     const user = await getUserByEmail(email);  // Verifica se o usuário existe pelo e-mail
     if (!user) {
@@ -128,8 +118,8 @@ const authenticateUser = async (email, password) => {
     }
 
     // Compara a senha fornecida com a senha armazenada (criptografada)
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
+    const issenhaValid = await bcrypt.compare(senha, user.senha);
+    if (!issenhaValid) {
       console.warn(`Senha incorreta para o email: ${email}`);
       return null;  // Retorna null se a senha for inválida
     }

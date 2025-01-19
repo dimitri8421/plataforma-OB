@@ -1,4 +1,4 @@
-const Order = require('../models/Order');
+  const Order = require('../models/Order');
 const mongoose = require('mongoose');
 
 // Função para criação de uma nova ordem

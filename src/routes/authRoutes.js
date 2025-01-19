@@ -60,6 +60,9 @@ router.post('/login',
     body('password').notEmpty().withMessage('A senha é obrigatória')
   ], 
   async (req, res) => {
+
+    console.log("Entrou no login");
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
