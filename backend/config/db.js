@@ -6,8 +6,8 @@ const pool = new Pool({
     host: process.env.DB_HOST || 'localhost',  // Host do banco de dados
     user: process.env.DB_USER || 'postgres',  // Usuário do banco de dados
     password: process.env.DB_PASSWORD || 'Skatesz11',  // Senha do banco de dados
-    database: process.env.DB_NAME || 'bd_next',  // Nome do banco de dados
-    port: process.env.DB_PORT || 4002,  // Porta padrão do PostgreSQL
+    database: process.env.DB_NAME || 'postgres',  // Nome do banco de dados
+    port: process.env.DB_PORT || 5432,  // Porta padrão do PostgreSQL
     max: 10,  // Limite de conexões simultâneas
     idleTimeoutMillis: 30000,  // Tempo antes de encerrar conexões inativas (em ms)
     connectionTimeoutMillis: 2000,  // Tempo limite para estabelecer conexão (em ms)
