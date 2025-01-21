@@ -3,8 +3,8 @@ const bcrypt = require('bcryptjs'); // Para hash de senha
 const pool = require('../config/db');  // Importa a conexão com o banco de dados
 
 // Função para validar os dados do usuário
-const validateUserData = (nome, email, senha) => {
-  if (!nome || !email || !senha) {
+const validateUserData = (nome, email, senha, telefone) => {
+  if (!nome || !email || !senha || !telefone) {
     throw new Error('Todos os campos (nome, email, senha, telefone) são obrigatórios');
   }
   const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -20,15 +20,15 @@ const createUser = async (nome, email, senha, telefone) => {
     validateUserData(nome, email, senha, telefone);
     
     // Criptografar a senha
-    const hashedsenha = await bcrypt.hash(senha, 12);
+    const senhaCriptografada = await bcrypt.hash(senha, 12);
 
     const query = 'INSERT INTO usuarios (nome, email, senha, telefone) VALUES (?, ?, ?, ?)';
-    const values = [nome, email, hashedsenha];
+    const values = [nome, email, senhaCriptografada, telefone];
 
     const [result] = await pool.query(query, values);
 
     // Retorna o usuário criado, incluindo o id gerado
-    return { id: result.insertId, nome, email };
+    return { id: result.insertId, nome, email,telefone };
   } catch (error) {
     console.error('Erro ao criar usuário:', error.message);
     throw new Error('Erro ao criar o usuário');

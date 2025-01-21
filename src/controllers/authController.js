@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator'); // Para validação d
 
 // Função para registrar um novo usuário
 exports.register = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { nome, email, password,telefone } = req.body;
 
   // Validação de dados de entrada
   const errors = validationResult(req);
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12); // Aumentando a complexidade da criptografia
 
     // Criar o novo usuário
-    const newUser = await User.createUser(username, email, hashedPassword);
+    const newUser = await User.createUser(nome, email, hashedPassword,telefone);
 
     // Resposta de sucesso
     res.status(201).json({
@@ -75,11 +75,11 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Senha incorreta' });
     }
 
-    // // Comparar a senha fornecida com a senha criptografada
-    // const isPasswordValid = await bcrypt.compare(password, user.senha);
-    // if (!isPasswordValid) {
-    //   return res.status(400).json({ success: false, message: 'Senha incorreta' });
-    // }
+    // Comparar a senha fornecida com a senha criptografada
+    const isPasswordValid = await bcrypt.compare(password, user.senha);
+    if (!isPasswordValid) {
+      return res.status(400).json({ success: false, message: 'Senha incorreta' });
+    }
 
     // Criar um token JWT
     const token = jwt.sign(
