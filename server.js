@@ -1,5 +1,4 @@
 require('dotenv').config(); // Carregar variáveis de ambiente do arquivo .env
-const http = require('http'); // Importa o módulo HTTP
 const { Server } = require('socket.io'); // Importa o Socket.IO
 const express = require('express');
 const bcrypt = require('bcryptjs');
@@ -12,10 +11,18 @@ const morgan = require('morgan'); // Para logging de requisições HTTP
 const rateLimit = require('express-rate-limit'); // Limitação de taxa
 const setupWebSocket = require('./src/config/websocket');
 const allRoutes = require('./src/allRoutes');
+const fs = require('fs'); // Importa o módulo de sistema de arquivos
+const https = require('https');
 
+const options = {
+  key: fs.readFileSync('/etc/letsencrypt/live/nextsystemstech.com/fullchain.pem'), // Substitua pelo caminho da sua chave privada
+  cert: fs.readFileSync('/etc/letsencrypt/live/nextsystemstech.com/privkey.pem' ) // Substitua pelo caminho do seu certificado
+};
 const app = express();
-const server = http.createServer(app); // Criação do servidor HTTP com Express
-const io = new Server(server); // Inicializa o Socket.IO com o servidor HTTP
+const server = https.createServer(options,app, ); // Criação do servidor HTTP com Express
+const io = new Server(server, {
+
+}); // Inicializa o Socket.IO com o servidor HTTP
 
 app.use(express.json());
 app.use(express.static('public'));
